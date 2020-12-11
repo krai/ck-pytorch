@@ -61,6 +61,7 @@
   "run_vars": {
     "CK_BATCH_COUNT": 1,
     "CK_BATCH_SIZE": 1,
+    "CK_BERT_DATA_ROOT": "/data/lg4/bert_large_data",
     "CK_DISABLE_CUDA": "NO"
   },
   "tags": [

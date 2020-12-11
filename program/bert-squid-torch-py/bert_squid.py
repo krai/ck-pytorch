@@ -5,8 +5,8 @@ import pickle
 import subprocess
 import sys
 
-BERT_CODE_ROOT=os.getenv('CK_ENV_MLPERF_INFERENCE')+'/language/bert'
-BERT_DATA_ROOT='/datasets/bert_large_data'
+BERT_CODE_ROOT=os.environ['CK_ENV_MLPERF_INFERENCE']+'/language/bert'
+BERT_DATA_ROOT=os.environ['CK_BERT_DATA_ROOT']
 
 sys.path.insert(0, BERT_CODE_ROOT)
 sys.path.insert(0, BERT_CODE_ROOT + '/DeepLearningExamples/TensorFlow/LanguageModeling/BERT')
