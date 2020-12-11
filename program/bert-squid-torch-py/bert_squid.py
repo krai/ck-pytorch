@@ -80,8 +80,12 @@ else:
     with open(cache_path, 'wb') as cache_file:
         pickle.dump(eval_features, cache_file)
 
-print("Total features available: {}".format(len(eval_features)))
+TOTAL_EXAMPLES=len(eval_features)
+print("Total examples available: {}".format(TOTAL_EXAMPLES))
 
+## Processing by batches:
+#
+BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT')) or TOTAL_EXAMPLES
 
 encoded_accuracy_log = []
 with torch.no_grad():
@@ -94,7 +98,7 @@ with torch.no_grad():
         output = torch.stack([start_scores, end_scores], axis=-1).squeeze(0).cpu().numpy()
 
         encoded_accuracy_log.append({'qsl_idx': i, 'data': output.tobytes().hex()})
-        print("Batch #{} done".format(i+1))
+        print("Batch #{}/{} done".format(i+1, BATCH_COUNT))
 
 
 with open('accuracy_log.json', 'w') as f:
