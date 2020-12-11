@@ -91,7 +91,7 @@ with torch.no_grad():
         start_scores, end_scores = model.forward(input_ids=torch.LongTensor(selected_features.input_ids).unsqueeze(0).to(TORCH_DEVICE),
             attention_mask=torch.LongTensor(selected_features.input_mask).unsqueeze(0).to(TORCH_DEVICE),
             token_type_ids=torch.LongTensor(selected_features.segment_ids).unsqueeze(0).to(TORCH_DEVICE))
-        output = torch.stack([start_scores, end_scores], axis=-1).squeeze(0).to(TORCH_DEVICE).numpy()
+        output = torch.stack([start_scores, end_scores], axis=-1).squeeze(0).cpu().numpy()
 
         encoded_accuracy_log.append({'qsl_idx': i, 'data': output.tobytes().hex()})
         print("Batch #{} done".format(i+1))
