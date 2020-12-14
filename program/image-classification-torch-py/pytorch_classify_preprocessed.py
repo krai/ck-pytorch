@@ -23,7 +23,9 @@ BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
 ## Enabling GPU if available and not disabled:
 #
 USE_CUDA                = torch.cuda.is_available() and (os.getenv('CK_DISABLE_CUDA', '0') in ('NO', 'no', 'OFF', 'off', '0'))
+TORCH_DEVICE            = 'cuda:0' if USE_CUDA else 'cpu'
 
+print("Torch execution device: "+TORCH_DEVICE)
 
 def main():
     global BATCH_SIZE
@@ -50,8 +52,7 @@ def main():
     model.eval()
 
     # move the model to GPU for speed if available
-    if USE_CUDA:
-        model.to('cuda')
+    model.to(TORCH_DEVICE)
 
     setup_time = time.time() - setup_time_begin
 
@@ -82,8 +83,7 @@ def main():
         begin_time = time.time()
 
         # move the input to GPU for speed if available
-        if USE_CUDA:
-            torch_batch = torch_batch.to('cuda')
+        torch_batch = torch_batch.to(TORCH_DEVICE)
 
         with torch.no_grad():
             batch_results = model( torch_batch )
