@@ -13,8 +13,7 @@ sys.path.insert(0, BERT_CODE_ROOT + '/DeepLearningExamples/TensorFlow/LanguageMo
 
 import numpy as np
 import torch
-from transformers import BertConfig, BertForQuestionAnswering, BertTokenizer
-from create_squad_data import read_squad_examples, convert_examples_to_features
+from transformers import BertConfig, BertForQuestionAnswering
 
 ## Processing by batches:
 #
@@ -53,6 +52,9 @@ if os.path.exists(cache_path):
     with open(cache_path, 'rb') as cache_file:
         eval_features = pickle.load(cache_file)
 else:
+    from create_squad_data import read_squad_examples, convert_examples_to_features
+    from transformers import BertTokenizer
+
     print("No cached features at '%s'... converting from examples..." % cache_path)
 
     print("Creating tokenizer...")
