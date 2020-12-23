@@ -1,5 +1,6 @@
 {
   "backup_data_uid": "247a88981eda961a",
+  "pass_env_to_resolve": "yes",
   "build_compiler_vars": {},
   "data_name": "image-classification-torch-py",
   "main_language": "python",
@@ -51,6 +52,15 @@
       "sort": 40,
       "tags": "lib,python-package,numpy"
     },
+    "lib-python-scipy": {
+      "enable_if_env": [
+        { "CK_MODEL_EXTRA_SOFTMAX": ["on", "On", "ON", "yes", "Yes", "YES", "true", "True", "TRUE", "1"] }
+      ],
+      "local": "yes",
+      "name": "Python SciPy library",
+      "sort": 45,
+      "tags": "lib,python-package,scipy"
+    },
     "lib-python-pillow": {
       "local": "yes",
       "name": "Python Pillow library",
@@ -72,6 +82,7 @@
     "CK_SILENT_MODE": 0,
     "CK_SKIP_IMAGES": 0,
     "CK_DISABLE_CUDA": "NO",
+    "CK_MODEL_EXTRA_SOFTMAX": "no",
     "ML_MODEL_IMAGE_HEIGHT": 224,
     "ML_MODEL_IMAGE_WIDTH": 224,
     "ML_MODEL_NORMALIZE_DATA": "YES",

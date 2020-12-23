@@ -13,9 +13,13 @@ TORCH_MODEL_NAME        = os.getenv('ML_TORCH_MODEL_NAME', 'resnet50')
 
 ## Writing the results out:
 #
+EXTRA_SOFTMAX           = os.getenv('CK_MODEL_EXTRA_SOFTMAX','0').lower() in ('yes', 'on', 'true', '1')
 RESULTS_DIR             = os.getenv('CK_RESULTS_DIR')
 CLEANUP                 = os.getenv('CK_CONTINUE', '0').lower() in ('no', 'off', 'false', '0')
 FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
+
+if EXTRA_SOFTMAX:
+    from scipy.special import softmax
 
 ## Processing by batches:
 #
@@ -100,13 +104,16 @@ def main():
         if batch_index == 0:
             first_classification_time = classification_time
 
+        if EXTRA_SOFTMAX:
+            batch_results = softmax(batch_results, axis=1)
+
         # Process results
         for index_in_batch in range(BATCH_SIZE):
-            softmax_vector = batch_results[index_in_batch][bg_class_offset:]    # skipping the background class on the left (if present)
+            output_weights_vector = batch_results[index_in_batch][bg_class_offset:]    # skipping the background class on the left (if present)
             global_index = SKIP_IMAGES + batch_index * BATCH_SIZE + index_in_batch
             res_file = os.path.join(RESULTS_DIR, image_list[global_index])
             with open(res_file + '.txt', 'w') as f:
-                for prob in softmax_vector:
+                for prob in output_weights_vector:
                     f.write('{}\n'.format(prob))
             
     test_time = time.time() - test_time_begin
