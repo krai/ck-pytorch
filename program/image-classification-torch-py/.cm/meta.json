@@ -52,15 +52,6 @@
       "sort": 40,
       "tags": "lib,python-package,numpy"
     },
-    "lib-python-scipy": {
-      "enable_if_env": [
-        { "CK_MODEL_EXTRA_SOFTMAX": ["on", "On", "ON", "yes", "Yes", "YES", "true", "True", "TRUE", "1"] }
-      ],
-      "local": "yes",
-      "name": "Python SciPy library",
-      "sort": 45,
-      "tags": "lib,python-package,scipy"
-    },
     "lib-python-pillow": {
       "local": "yes",
       "name": "Python Pillow library",

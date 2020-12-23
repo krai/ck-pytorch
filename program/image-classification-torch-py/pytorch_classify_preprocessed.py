@@ -19,7 +19,7 @@ CLEANUP                 = os.getenv('CK_CONTINUE', '0').lower() in ('no', 'off',
 FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
 
 if EXTRA_SOFTMAX:
-    from scipy.special import softmax
+    from torch.nn.functional import softmax
 
 ## Processing by batches:
 #
@@ -105,7 +105,7 @@ def main():
             first_classification_time = classification_time
 
         if EXTRA_SOFTMAX:
-            batch_results = softmax(batch_results, axis=1)
+            batch_results = softmax(batch_results, dim=1)
 
         # Process results
         for index_in_batch in range(BATCH_SIZE):
