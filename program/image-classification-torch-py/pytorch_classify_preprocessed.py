@@ -14,11 +14,13 @@ TORCH_MODEL_NAME        = os.getenv('ML_TORCH_MODEL_NAME', 'resnet50')
 ## Writing the results out:
 #
 RESULTS_DIR             = os.getenv('CK_RESULTS_DIR')
+CLEANUP                 = os.getenv('CK_CONTINUE', '0').lower() in ('no', 'off', 'false', '0')
 FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
 
 ## Processing by batches:
 #
 BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
+SKIP_IMAGES             = int(os.getenv('CK_SKIP_IMAGES', 0))
 
 ## Enabling GPU if available and not disabled:
 #
@@ -36,9 +38,10 @@ def main():
     bg_class_offset=0
 
     # Cleanup results directory
-    if os.path.isdir(RESULTS_DIR):
-        shutil.rmtree(RESULTS_DIR)
-    os.mkdir(RESULTS_DIR)
+    if CLEANUP:
+        if os.path.isdir(RESULTS_DIR):
+            shutil.rmtree(RESULTS_DIR)
+        os.mkdir(RESULTS_DIR)
 
     # Load the [cached] Torch model
     torchvision_version = ''    # master by default
@@ -58,11 +61,11 @@ def main():
 
     # Run batched mode
     test_time_begin = time.time()
-    image_index = 0
     total_load_time = 0
     total_classification_time = 0
     first_classification_time = 0
     images_loaded = 0
+    image_index = SKIP_IMAGES
 
     for batch_index in range(BATCH_COUNT):
         batch_number = batch_index+1
@@ -100,7 +103,7 @@ def main():
         # Process results
         for index_in_batch in range(BATCH_SIZE):
             softmax_vector = batch_results[index_in_batch][bg_class_offset:]    # skipping the background class on the left (if present)
-            global_index = batch_index * BATCH_SIZE + index_in_batch
+            global_index = SKIP_IMAGES + batch_index * BATCH_SIZE + index_in_batch
             res_file = os.path.join(RESULTS_DIR, image_list[global_index])
             with open(res_file + '.txt', 'w') as f:
                 for prob in softmax_vector:
