@@ -4,19 +4,17 @@
     "check_that_exists": "yes",
     "ck_version": 10,
     "env_prefix": "CK_ENV_MODEL_PYTORCH",
+    "extra_search_dirs": { "linux": [ "/datasets", "/data" ] },
     "limit_recursion_dir_search": {
       "android": 3,
       "linux": 3,
       "win": 3
     },
-    "soft_file": {
-      "android": "model.pt",
-      "linux": "model.pt",
-      "win": "model.pt"
-    }
+    "soft_file_universal": "model.p*t*"
   },
-  "soft_name": "PyTorch model (net and weights)",
+  "soft_name": "PyTorch model",
   "tags": [
+    "model",
     "pytorch",
     "weights",
     "pytorchmodel"

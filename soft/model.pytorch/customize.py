@@ -80,6 +80,7 @@ def setup(i):
 
     ep=cus['env_prefix']
     env[ep]=pi
+    env[ep+'_FILEPATH']=fp
 
     x=cus.get('file_model','')
     if x!='': 
