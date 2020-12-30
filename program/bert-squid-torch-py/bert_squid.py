@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import json
 import os
@@ -6,7 +7,6 @@ import subprocess
 import sys
 
 BERT_CODE_ROOT=os.environ['CK_ENV_MLPERF_INFERENCE']+'/language/bert'
-BERT_DATA_ROOT=os.environ['CK_BERT_DATA_ROOT']
 
 sys.path.insert(0, BERT_CODE_ROOT)
 sys.path.insert(0, BERT_CODE_ROOT + '/DeepLearningExamples/TensorFlow/LanguageModeling/BERT')
@@ -14,6 +14,16 @@ sys.path.insert(0, BERT_CODE_ROOT + '/DeepLearningExamples/TensorFlow/LanguageMo
 import numpy as np
 import torch
 from transformers import BertConfig, BertForQuestionAnswering
+
+## SQuAD dataset - original and tokenized
+#
+SQUAD_DATASET_ORIGINAL_PATH     = os.environ['CK_ENV_DATASET_SQUAD_ORIGINAL']
+SQUAD_DATASET_TOKENIZED_PATH    = os.environ['CK_ENV_DATASET_SQUAD_TOKENIZED']
+
+## Model config and weights:
+#
+BERT_MODEL_CONFIG_PATH          = BERT_CODE_ROOT + '/bert_config.json'
+BERT_MODEL_WEIGHTS_PATH         = os.environ['CK_ENV_MODEL_PYTORCH_FILEPATH']
 
 ## Processing by batches:
 #
@@ -27,67 +37,27 @@ TORCH_DEVICE            = 'cuda:0' if USE_CUDA else 'cpu'
 print("Torch execution device: "+TORCH_DEVICE)
 
 
-cache_path='eval_features.pickle'
-max_seq_length = 384
-max_query_length = 64
-doc_stride = 128
+print("Loading BERT configs from {} ...".format(BERT_MODEL_CONFIG_PATH))
+with open(BERT_MODEL_CONFIG_PATH) as bert_config_file:
+    bert_config_dict = json.load(bert_config_file)
+    bert_config_obj = BertConfig( **bert_config_dict )
 
-print("Loading BERT configs...")
-with open(BERT_CODE_ROOT + '/bert_config.json') as f:
-    bert_config_dict = json.load(f)
-
-bert_config_obj = BertConfig( **bert_config_dict )
-
-print("Loading PyTorch model...")
+print("Loading BERT model weights from {} ...".format(BERT_MODEL_WEIGHTS_PATH))
 model = BertForQuestionAnswering(bert_config_obj)
 model.eval()
 model.to(TORCH_DEVICE)
-model.load_state_dict(torch.load(BERT_DATA_ROOT +"/bert_tf_v1_1_large_fp32_384_v2/model.pytorch"))
+model.load_state_dict(torch.load(BERT_MODEL_WEIGHTS_PATH))
 
+print("Loading tokenized SQuAD dataset as features from {} ...".format(SQUAD_DATASET_TOKENIZED_PATH))
+with open(SQUAD_DATASET_TOKENIZED_PATH, 'rb') as tokenized_features_file:
+    eval_features = pickle.load(tokenized_features_file)
 
-eval_features = []
-# Load features if cached, convert from examples otherwise.
-if os.path.exists(cache_path):
-    print("Loading cached features from '%s'..." % cache_path)
-    with open(cache_path, 'rb') as cache_file:
-        eval_features = pickle.load(cache_file)
-else:
-    from create_squad_data import read_squad_examples, convert_examples_to_features
-    from transformers import BertTokenizer
-
-    print("No cached features at '%s'... converting from examples..." % cache_path)
-
-    print("Creating tokenizer...")
-    tokenizer = BertTokenizer(BERT_DATA_ROOT + "/bert_tf_v1_1_large_fp32_384_v2/vocab.txt")
-
-    print("Reading examples...")
-    eval_examples = read_squad_examples(input_file=BERT_DATA_ROOT + "/dev-v1.1.json",
-        is_training=False, version_2_with_negative=False)
-
-    print("Converting examples to features...")
-    def append_feature(feature):
-        eval_features.append(feature)
-
-    convert_examples_to_features(
-        examples=eval_examples,
-        tokenizer=tokenizer,
-        max_seq_length=max_seq_length,
-        doc_stride=doc_stride,
-        max_query_length=max_query_length,
-        is_training=False,
-        output_fn=append_feature,
-        verbose_logging=False)
-
-    print("Caching features at '%s'..." % cache_path)
-    with open(cache_path, 'wb') as cache_file:
-        pickle.dump(eval_features, cache_file)
-
-TOTAL_EXAMPLES=len(eval_features)
-print("Total examples available: {}".format(TOTAL_EXAMPLES))
+TOTAL_FEATURES  = len(eval_features)
+print("Total examples available: {}".format(TOTAL_FEATURES))
 
 ## Processing by batches:
 #
-BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT')) or TOTAL_EXAMPLES
+BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT')) or TOTAL_FEATURES
 
 encoded_accuracy_log = []
 with torch.no_grad():
@@ -103,8 +73,8 @@ with torch.no_grad():
         print("Batch #{}/{} done".format(i+1, BATCH_COUNT))
 
 
-with open('accuracy_log.json', 'w') as f:
-    json.dump(encoded_accuracy_log, f)
+with open('accuracy_log.json', 'w') as accuracy_log_file:
+    json.dump(encoded_accuracy_log, accuracy_log_file)
 
-cmd = "python3 "+BERT_CODE_ROOT+"/accuracy-squad.py --val_data={} --log_file=accuracy_log.json --out_file=predictions.json --max_examples={}".format(BERT_DATA_ROOT + "/dev-v1.1.json", BATCH_COUNT)
+cmd = "python3 "+BERT_CODE_ROOT+"/accuracy-squad.py --val_data={} --features_cache_file={} --log_file=accuracy_log.json --out_file=predictions.json --max_examples={}".format(SQUAD_DATASET_ORIGINAL_PATH, SQUAD_DATASET_TOKENIZED_PATH, BATCH_COUNT)
 subprocess.check_call(cmd, shell=True)

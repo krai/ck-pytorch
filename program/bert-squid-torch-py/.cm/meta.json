@@ -56,11 +56,28 @@
       },
       "version_from": [ 2, 4, 0],
       "version_to": [ 2, 4, 0]
+    },
+    "dataset-original": {
+      "local": "yes",
+      "name": "Original SQuAD dataset",
+      "sort": 110,
+      "tags": "dataset,squad,original"
+    },
+    "dataset-tokenized": {
+      "local": "yes",
+      "name": "SQuAD dataset tokenized for BERT",
+      "sort": 120,
+      "tags": "dataset,squad,tokenized"
+    },
+    "weights": {
+      "local": "yes",
+      "name": "Pytorch model weights for BERT",
+      "sort": 130,
+      "tags": "model,weights,pytorch,bert"
     }
   },
   "run_vars": {
     "CK_BATCH_COUNT": "0",
-    "CK_BERT_DATA_ROOT": "/data/lg4/bert_large_data",
     "CK_DISABLE_CUDA": "NO"
   },
   "tags": [
