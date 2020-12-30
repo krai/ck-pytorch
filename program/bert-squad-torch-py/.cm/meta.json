@@ -1,7 +1,7 @@
 {
   "backup_data_uid": "82f16e1439584ca2",
   "build_compiler_vars": {},
-  "data_name": "bert-squid-torch-py",
+  "data_name": "bert-squad-torch-py",
   "main_language": "python",
   "no_compile": "yes",
   "no_target_file": "yes",
@@ -11,7 +11,7 @@
     "default": {
       "ignore_return_code": "no",
       "run_time": {
-        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../bert_squid.py"
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../bert_squad.py"
       }
     }
   },
@@ -82,7 +82,7 @@
   },
   "tags": [
     "bert",
-    "squid",
+    "squad",
     "torch",
     "pytorch",
     "lang-python"
