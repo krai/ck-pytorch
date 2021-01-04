@@ -40,7 +40,8 @@
       "local": "yes",
       "name": "PyTorch library",
       "sort": 40,
-      "tags": "lib,python-package,torch"
+      "tags": "lib,python-package,torch",
+      "version_from": [ 1, 6, 0]
     },
     "lib-python-transformers": {
       "local": "yes",
