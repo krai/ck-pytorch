@@ -41,6 +41,7 @@ print("Torch execution device: "+TORCH_DEVICE)
 if BERT_MODEL_HUB_NAME:
     print("Loading BERT model {} from the hub ...".format(BERT_MODEL_HUB_NAME))
     model = BertForQuestionAnswering.from_pretrained(BERT_MODEL_HUB_NAME)
+    bert_config_obj = model.config
     model.eval()
     model.to(TORCH_DEVICE)
 else:
@@ -55,6 +56,7 @@ else:
     print("Loading BERT model weights from {} ...".format(BERT_MODEL_WEIGHTS_PATH))
     model.load_state_dict(torch.load(BERT_MODEL_WEIGHTS_PATH))
 
+print("Vocabulary size: {}".format(bert_config_obj.vocab_size))
 
 print("Loading tokenized SQuAD dataset as features from {} ...".format(SQUAD_DATASET_TOKENIZED_PATH))
 with open(SQUAD_DATASET_TOKENIZED_PATH, 'rb') as tokenized_features_file:
@@ -70,12 +72,12 @@ BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT')) or TOTAL_FEATURES
 encoded_accuracy_log = []
 with torch.no_grad():
     for i in range(BATCH_COUNT):
-        selected_features = eval_features[i]
-        #print(len(selected_features.input_ids), len(selected_features.input_mask), len(selected_features.segment_ids))
+        selected_feature = eval_features[i]
+        #print(len(selected_feature.input_ids), len(selected_feature.input_mask), len(selected_feature.segment_ids))
 
-        start_scores, end_scores = model.forward(input_ids=torch.LongTensor(selected_features.input_ids).unsqueeze(0).to(TORCH_DEVICE),
-            attention_mask=torch.LongTensor(selected_features.input_mask).unsqueeze(0).to(TORCH_DEVICE),
-            token_type_ids=torch.LongTensor(selected_features.segment_ids).unsqueeze(0).to(TORCH_DEVICE))
+        start_scores, end_scores = model.forward(input_ids=torch.LongTensor(selected_feature.input_ids).unsqueeze(0).to(TORCH_DEVICE),
+            attention_mask=torch.LongTensor(selected_feature.input_mask).unsqueeze(0).to(TORCH_DEVICE),
+            token_type_ids=torch.LongTensor(selected_feature.segment_ids).unsqueeze(0).to(TORCH_DEVICE))
         output = torch.stack([start_scores, end_scores], axis=-1).squeeze(0).cpu().numpy()
 
         encoded_accuracy_log.append({'qsl_idx': i, 'data': output.tobytes().hex()})
