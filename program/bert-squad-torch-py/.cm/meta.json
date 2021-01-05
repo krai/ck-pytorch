@@ -79,7 +79,8 @@
   },
   "run_vars": {
     "CK_BATCH_COUNT": "0",
-    "CK_DISABLE_CUDA": "NO"
+    "CK_DISABLE_CUDA": "NO",
+    "CK_BERT_MODEL_HUB_NAME": ""
   },
   "tags": [
     "bert",

@@ -22,6 +22,7 @@ SQUAD_DATASET_TOKENIZED_PATH    = os.environ['CK_ENV_DATASET_SQUAD_TOKENIZED']
 
 ## Model config and weights:
 #
+BERT_MODEL_HUB_NAME             = os.getenv('CK_BERT_MODEL_HUB_NAME')
 BERT_MODEL_CONFIG_PATH          = BERT_CODE_ROOT + '/bert_config.json'
 BERT_MODEL_WEIGHTS_PATH         = os.environ['CK_ENV_MODEL_PYTORCH_FILEPATH']
 
@@ -37,16 +38,23 @@ TORCH_DEVICE            = 'cuda:0' if USE_CUDA else 'cpu'
 print("Torch execution device: "+TORCH_DEVICE)
 
 
-print("Loading BERT configs from {} ...".format(BERT_MODEL_CONFIG_PATH))
-with open(BERT_MODEL_CONFIG_PATH) as bert_config_file:
-    bert_config_dict = json.load(bert_config_file)
-    bert_config_obj = BertConfig( **bert_config_dict )
+if BERT_MODEL_HUB_NAME:
+    print("Loading BERT model {} from the hub ...".format(BERT_MODEL_HUB_NAME))
+    model = BertForQuestionAnswering.from_pretrained(BERT_MODEL_HUB_NAME)
+    model.eval()
+    model.to(TORCH_DEVICE)
+else:
+    print("Loading BERT config from {} ...".format(BERT_MODEL_CONFIG_PATH))
+    with open(BERT_MODEL_CONFIG_PATH) as bert_config_file:
+        bert_config_dict = json.load(bert_config_file)
+        bert_config_obj = BertConfig( **bert_config_dict )
 
-print("Loading BERT model weights from {} ...".format(BERT_MODEL_WEIGHTS_PATH))
-model = BertForQuestionAnswering(bert_config_obj)
-model.eval()
-model.to(TORCH_DEVICE)
-model.load_state_dict(torch.load(BERT_MODEL_WEIGHTS_PATH))
+    model = BertForQuestionAnswering(bert_config_obj)
+    model.eval()
+    model.to(TORCH_DEVICE)
+    print("Loading BERT model weights from {} ...".format(BERT_MODEL_WEIGHTS_PATH))
+    model.load_state_dict(torch.load(BERT_MODEL_WEIGHTS_PATH))
+
 
 print("Loading tokenized SQuAD dataset as features from {} ...".format(SQUAD_DATASET_TOKENIZED_PATH))
 with open(SQUAD_DATASET_TOKENIZED_PATH, 'rb') as tokenized_features_file:
@@ -63,6 +71,7 @@ encoded_accuracy_log = []
 with torch.no_grad():
     for i in range(BATCH_COUNT):
         selected_features = eval_features[i]
+        #print(len(selected_features.input_ids), len(selected_features.input_mask), len(selected_features.segment_ids))
 
         start_scores, end_scores = model.forward(input_ids=torch.LongTensor(selected_features.input_ids).unsqueeze(0).to(TORCH_DEVICE),
             attention_mask=torch.LongTensor(selected_features.input_mask).unsqueeze(0).to(TORCH_DEVICE),
