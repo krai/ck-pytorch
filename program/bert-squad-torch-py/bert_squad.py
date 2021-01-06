@@ -62,18 +62,19 @@ print("Loading tokenized SQuAD dataset as features from {} ...".format(SQUAD_DAT
 with open(SQUAD_DATASET_TOKENIZED_PATH, 'rb') as tokenized_features_file:
     eval_features = pickle.load(tokenized_features_file)
 
-TOTAL_FEATURES  = len(eval_features)
-print("Total examples available: {}".format(TOTAL_FEATURES))
+print("Example width: {}".format(len(eval_features[0].input_ids)))
+
+TOTAL_EXAMPLES  = len(eval_features)
+print("Total examples available: {}".format(TOTAL_EXAMPLES))
 
 ## Processing by batches:
 #
-BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT')) or TOTAL_FEATURES
+BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT')) or TOTAL_EXAMPLES
 
 encoded_accuracy_log = []
 with torch.no_grad():
     for i in range(BATCH_COUNT):
         selected_feature = eval_features[i]
-        #print(len(selected_feature.input_ids), len(selected_feature.input_mask), len(selected_feature.segment_ids))
 
         start_scores, end_scores = model.forward(input_ids=torch.LongTensor(selected_feature.input_ids).unsqueeze(0).to(TORCH_DEVICE),
             attention_mask=torch.LongTensor(selected_feature.input_mask).unsqueeze(0).to(TORCH_DEVICE),
