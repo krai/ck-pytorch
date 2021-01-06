@@ -24,7 +24,7 @@ SQUAD_DATASET_TOKENIZED_PATH    = os.environ['CK_ENV_DATASET_SQUAD_TOKENIZED']
 #
 BERT_MODEL_HUB_NAME             = os.getenv('CK_BERT_MODEL_HUB_NAME')
 BERT_MODEL_CONFIG_PATH          = BERT_CODE_ROOT + '/bert_config.json'
-BERT_MODEL_WEIGHTS_PATH         = os.environ['CK_ENV_MODEL_PYTORCH_FILEPATH']
+BERT_MODEL_WEIGHTS_PATH         = os.getenv('CK_ENV_MODEL_PYTORCH_FILEPATH')    # only available if BERT_MODEL_HUB_NAME is empty
 
 ## Processing by batches:
 #

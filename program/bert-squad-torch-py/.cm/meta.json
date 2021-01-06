@@ -1,5 +1,6 @@
 {
   "backup_data_uid": "82f16e1439584ca2",
+  "pass_env_to_resolve": "yes",
   "build_compiler_vars": {},
   "data_name": "bert-squad-torch-py",
   "main_language": "python",
@@ -71,6 +72,7 @@
       "tags": "dataset,squad,tokenized"
     },
     "weights": {
+      "enable_if_env": [ { "CK_BERT_MODEL_HUB_NAME": [""] } ],
       "local": "yes",
       "name": "Pytorch model weights for BERT",
       "sort": 130,
