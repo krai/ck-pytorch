@@ -2,7 +2,7 @@
   "data_uid": "9116e3c9d3784902", 
   "data_name": "ck-pytorch", 
   "dict": {
-    "url": "https://github.com/ctuning/ck-pytorch", 
+    "url": "https://github.com/dividiti/ck-pytorch",
     "shared": "git",
     "repo_deps": [
       {
