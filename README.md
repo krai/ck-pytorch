@@ -1,6 +1,6 @@
 # Collective Knowledge repository for PyTorch
 
-*This fork is maintained by [dividiti Limited](https://dividiti.com).*
+*This fork is maintained by [Krai Ltd](https://krai.ai).*
 
 [![compatibility](https://github.com/ctuning/ck-guide-images/blob/master/ck-compatible.svg)](https://github.com/ctuning/ck)
 [![automation](https://github.com/ctuning/ck-guide-images/blob/master/ck-artifact-automated-and-reusable.svg)](http://cTuning.org/ae)
@@ -14,7 +14,7 @@ This repository provides portable, customizable, and reproducible workflows, aut
 for [PyTorch](http://pytorch.org) in the [Collective Knowledge format (CK)](https://github.com/ctuning/ck).
 
 ## Maintainers
-* [dividiti](http://dividiti.com)
+* [Krai](http://krai.ai)
 
 ## Minimal CK installation
 
