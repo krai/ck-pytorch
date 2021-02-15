@@ -26,9 +26,7 @@ BERT_MODEL_HUB_NAME             = os.getenv('CK_BERT_MODEL_HUB_NAME')
 BERT_MODEL_CONFIG_PATH          = BERT_CODE_ROOT + '/bert_config.json'
 BERT_MODEL_WEIGHTS_PATH         = os.getenv('CK_ENV_MODEL_PYTORCH_FILEPATH')    # only available if BERT_MODEL_HUB_NAME is empty
 
-## Processing by batches:
-#
-BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
+IO_DUMP_PATH                    = os.getenv('CK_IO_DUMP_PATH')
 
 ## Enabling GPU if available and not disabled:
 #
@@ -71,7 +69,9 @@ print("Total examples available: {}".format(TOTAL_EXAMPLES))
 #
 BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT')) or TOTAL_EXAMPLES
 
-encoded_accuracy_log = []
+
+encoded_accuracy_log    = []
+io_dump_structure       = {}
 with torch.no_grad():
     for i in range(BATCH_COUNT):
         selected_feature = eval_features[i]
@@ -84,9 +84,22 @@ with torch.no_grad():
         encoded_accuracy_log.append({'qsl_idx': i, 'data': output.tobytes().hex()})
         print("Batch #{}/{} done".format(i+1, BATCH_COUNT))
 
+        if IO_DUMP_PATH:
+            io_dump_structure[f'sample_{i+1}'] = {
+                'input_ids':        selected_feature.input_ids,
+                'attention_mask':   selected_feature.input_mask,
+                'token_type_ids':   selected_feature.segment_ids,
+                'start_scores':     start_scores.tolist(),
+                'end_scores':       end_scores.tolist(),
+            }
 
 with open('accuracy_log.json', 'w') as accuracy_log_file:
     json.dump(encoded_accuracy_log, accuracy_log_file)
+
+if IO_DUMP_PATH:
+    with open(IO_DUMP_PATH, 'w') as io_dump_file:
+        json.dump(io_dump_structure, io_dump_file, indent=4)
+    print(f"I/O dump stored in {IO_DUMP_PATH}")
 
 cmd = "python3 "+BERT_CODE_ROOT+"/accuracy-squad.py --val_data={} --features_cache_file={} --log_file=accuracy_log.json --out_file=predictions.json --max_examples={}".format(SQUAD_DATASET_ORIGINAL_PATH, SQUAD_DATASET_TOKENIZED_PATH, BATCH_COUNT)
 subprocess.check_call(cmd, shell=True)
