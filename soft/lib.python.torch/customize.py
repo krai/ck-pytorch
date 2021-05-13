@@ -129,11 +129,14 @@ def setup(i):
     #
     path_install            = os.path.dirname(path_build)
     path_bin                = os.path.join(path_install, 'python_deps_site', 'bin')
-
+    
     if os.path.isdir(path_bin):
         env['PATH']         = path_bin + ( ';%PATH%' if winh=='yes' else ':${PATH}')
-        major_version       = sys.version_info[0]
-        minor_version       = sys.version_info[1]
+        deps=i['deps']
+        version_info = deps['python']['detected_ver']
+        version_info = version_info.split(".")
+        major_version       = version_info[0]
+        minor_version       = version_info[1]
         python              = "python"+ str(major_version) + "." + str(minor_version)
         env[cus['env_prefix']+"_CMAKE_DIR"]  = os.path.join(path_install, 'python_deps_site', 'lib', python, 'site-packages', 'torch', 'share', 'cmake', 'Torch' )
         env[cus['env_prefix']+'_INCLUDE_DIR']  = os.path.join(path_install, 'python_deps_site', 'lib', python, 'site-packages', 'torch', 'include')
