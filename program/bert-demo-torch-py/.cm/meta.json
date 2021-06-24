@@ -1,0 +1,68 @@
+{
+  "backup_data_uid": "0c84e56a27451f61",
+  "build_compiler_vars": {},
+  "data_name": "bert-demo-torch-py",
+  "main_language": "python",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "pass_env_to_resolve": "yes",
+  "process_in_tmp": "no",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ bert_qa_demo.py"
+      }
+    }
+  },
+  "run_deps": {
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "Python NumPy library",
+      "sort": 20,
+      "tags": "lib,python-package,numpy"
+    },
+    "lib-python-torch": {
+      "local": "yes",
+      "name": "PyTorch library",
+      "sort": 40,
+      "tags": "lib,python-package,torch",
+      "version_from": [
+        1,
+        6,
+        0
+      ]
+    },
+    "lib-python-transformers": {
+      "local": "yes",
+      "name": "Python Transformers library",
+      "sort": 50,
+      "tags": "lib,python-package,transformers,original",
+      "version_from": [
+        2,
+        4,
+        0
+      ],
+      "version_to": [
+        2,
+        11,
+        0
+      ]
+    }
+  },
+  "run_vars": {
+    "CK_BERT_DATA_CONTEXT_PATH": "context.txt",
+    "CK_BERT_DATA_QUESTIONS_PATH": "questions.txt",
+    "CK_BERT_MODEL_NAME": "bert-large-uncased-whole-word-masking-finetuned-squad",
+    "CK_DEBUG": 0,
+    "CK_DISABLE_CUDA": "NO"
+  },
+  "tags": [
+    "bert",
+    "demo",
+    "torch",
+    "pytorch",
+    "lang-python"
+  ]
+}
