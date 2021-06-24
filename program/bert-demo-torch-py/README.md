@@ -1,4 +1,4 @@
-# A question-answering demo program based on HuggingFace transformers' BERT model and tokenizer
+# A question-answering demo program in [PyTorch](http://pytorch.org) based on (HuggingFace transformers')[https://huggingface.co/transformers/] BERT model and tokenizer
 
 ## Should work out of the box using the defaults:
 
@@ -25,7 +25,7 @@ $ ck run program:bert-demo-torch-py --env.CK_DEBUG=2
 
 ## Changing the model name:
 
-Try other models and see how it affects the result:
+Try [other models](https://huggingface.co/transformers/pretrained_models.html) and see how it affects the result:
 ```
 $ ck run program:bert-demo-torch-py --env.CK_BERT_MODEL_NAME=mrm8488/bert-medium-finetuned-squadv2
 ```
