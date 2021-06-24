@@ -1,4 +1,4 @@
-# A question-answering demo program in [PyTorch](http://pytorch.org) based on (HuggingFace transformers')[https://huggingface.co/transformers/] BERT model and tokenizer
+# A question-answering demo program in [PyTorch](http://pytorch.org) based on (HuggingFace transformers)[https://huggingface.co/transformers/]' BERT model and tokenizer
 
 ## Should work out of the box using the defaults:
 
