@@ -45,7 +45,8 @@ print(f"Questions taken from '{BERT_DATA_QUESTIONS_PATH}':\n")
 
 with torch.no_grad():
     for i, question in enumerate( questions ):
-        print(f"Question_{i+1}: {question}", end='')
+        question = question.rstrip()
+        print(f"Question_{i+1}: {question}")
 
         sample_encoding         = tokenizer.encode_plus( question, context )
         sample_input_ids        = sample_encoding["input_ids"]
