@@ -27,7 +27,7 @@ print("Torch execution device: "+TORCH_DEVICE)
 
 print(f"Loading BERT model '{BERT_MODEL_NAME}' from the HuggingFace transformers' hub ...")
 model = BertForQuestionAnswering.from_pretrained(BERT_MODEL_NAME)
-tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_NAME, return_token_type_ids=True, return_attention_mask=False)
+tokenizer = BertTokenizer.from_pretrained(BERT_MODEL_NAME)
 bert_config_obj = model.config
 model.eval()
 model.to(TORCH_DEVICE)
@@ -48,7 +48,7 @@ with torch.no_grad():
         question = question.rstrip()
         print(f"Question_{i+1}: {question}")
 
-        sample_encoding         = tokenizer.encode_plus( question, context )
+        sample_encoding         = tokenizer.encode_plus( question, context, return_token_type_ids=True, return_attention_mask=False )
         sample_input_ids        = sample_encoding["input_ids"]
         if DEBUG_LEVEL>0:
             print( len(sample_input_ids) )
